@@ -1,0 +1,15 @@
+/*
+ * @package Featured Posts
+ * @author Nando Pappalardo
+ * @version 1.3
+*/
+.widget_featured-posts {background:url('images/titlesidebar3.gif') no-repeat top left;padding:10px 0 0 0;font-size:110%;line-height:30px;}
+.widget_featured-posts li {line-height:20px;margin:0!important;padding:0.75em 0!important;font-size:90%;height:auto!important;height:80px;min-height:80px;border-bottom:1px solid #c6c5c5;}
+.widget_featured-posts li:last-child {border:none;}
+.widget_featured-posts img {border:3px solid #c7c6c6;}
+.widget_featured-posts img.alignleft {float:left;margin:0 1em 0 0;display:inline;}
+.widget_featured-posts .featured-title {}
+.widget_featured-posts li a {color:#000!important;}
+.widget_featured-posts li:hover {background:#cccbcb;}
+.widget_featured-posts li:hover img {border:3px solid #afaeae;}
+.clearer {height:0px;overflow:hidden;margin:0px;clear:both;}
