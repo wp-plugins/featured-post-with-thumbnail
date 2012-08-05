@@ -5,7 +5,7 @@ Donate link: https://www.paypal.com/it/cgi-bin/webscr?cmd=_flow&SESSION=QeFc087z
 Tags: Post, Posts, highlight, widget, thumbnail, Featured Post with Thumbnail, Featured Post, Post, highlighting best articles,
 Requires at least: 2.8, PHP4 & PHP5
 Tested up to: 2.9
-Stable tag: 1.4
+Stable tag: 1.5
  
 A really simple way of putting featured posts on your website.
 
@@ -13,6 +13,13 @@ A really simple way of putting featured posts on your website.
 
 This plugin let's you add - to any spot on your blog's sidebar - a section dedicated to the articles you'd like to highlight. How it works is very simple: once it's installed and activated you can decide which articles to add to the highlights section, how many to display, the display order mode and the size of the image retrieved (it takes the first image in the article and automatically resizes it using the "timthumb.php" script).
 
+**Subscribe Plugin Newsletter**
+
+<a href="http://yourinspirationweb.com/list/?p=subscribe&amp;id=4">Sign up</a> for our Newsletter Plugin and remain informed about news concerning its development and related improvements.
+
+**Support Forum**
+
+For any clarifications, suggestions, or criticism you can leave a comment on <a href="http://forum.yourinspirationweb.com/support-featured-post-with-thumbnail-plugin-f21.html">Forum Support</a>.
 
 **Some Features**
 
@@ -37,10 +44,9 @@ The Featured Posts can be installed in 3 easy steps:
 
 An answer to that question.
 
-= What about foo bar? =
+**Support Forum**
 
-Answer to foo bar dilemma.
-
+For any clarifications, suggestions, or criticism you can leave a comment on <a href="http://forum.yourinspirationweb.com/support-featured-post-with-thumbnail-plugin-f21.html">Forum Support</a>.
 
 == Screenshots ==
 
@@ -49,6 +55,10 @@ Answer to foo bar dilemma.
 3. Widget Featured Posts in action
 
 == Changelog ==
+
+= 1.5 =
+
+* fixed: timthumb vulnerability
 
 = 1.4 = 
 

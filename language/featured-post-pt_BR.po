@@ -4,83 +4,86 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-23 17:38+0100\n"
 "PO-Revision-Date: \n"
-"Last-Translator: nando pappalardo <nando.pappalardo@gmail.com>\n"
-"Language-Team: your inspiration web <info@yourinspirationweb.com>\n"
+"Last-Translator: Fernando Lopes <furmigalopes@gmail.com>\n"
+"Language-Team: Fernando Lopes <contato@fernandolopes.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-Basepath: ../\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+"X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: index.php:72
 msgid "This widget allows you to add in your blog's sidebar a list of featured posts."
-msgstr ""
+msgstr "Este widget permite que você adicione na barra lateral do seu blog uma lista de posts em destaque."
 
 #: index.php:78
 #: index.php:142
 msgid "Featured Posts"
-msgstr ""
+msgstr "Posts em Destaque"
 
 #: index.php:147
 msgid "Title:"
-msgstr ""
+msgstr "Título:"
 
 #: index.php:165
 msgid "How many posts do you want to display?"
-msgstr ""
+msgstr "Em quantos lugares você deseja exibir?"
 
 #: index.php:172
 msgid "Random"
-msgstr ""
+msgstr "Aleatório"
 
 #: index.php:173
 msgid "Title"
-msgstr ""
+msgstr "Título"
 
 #: index.php:174
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: index.php:175
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: index.php:176
 msgid "Modified"
-msgstr ""
+msgstr "Modificado"
 
 #: index.php:177
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: index.php:180
 msgid "Choose type of order:"
-msgstr ""
+msgstr "Escolha o tipo de ordem:"
 
 #: index.php:185
 msgid "Width Thumbnail"
-msgstr ""
+msgstr "Largura da Miniatura"
 
 #: index.php:190
 msgid "Height Thumbnail"
-msgstr ""
+msgstr "Altura da Miniatura"
 
 #: index.php:223
 msgid "Featured post?"
-msgstr ""
+msgstr "Post em destaque?"
 
 #: index.php:225
 msgid "Yes"
-msgstr ""
+msgstr "Sim"
 
 #: index.php:226
 msgid "No "
-msgstr ""
+msgstr "Não"
 
 #: index.php:231
 msgid "Featured"
-msgstr ""
+msgstr "Destaque"
 
 #~ msgid ""
 #~ "Questo widget ti permette di aggiungere la sottoscrizione ai vari Social "

@@ -1,222 +1,249 @@
 <?php
 /*
  * @package Featured Posts
- * @author Nando Pappalardo
- * @version 1.2
+ * @author Nando Pappalardo e Giustino Borzacchiello
+ * @version 1.4
  */
 /*
-Plugin Name: Featured Post with thumbnail
-Plugin URI: http://www.yourinspirationweb.com/en/wordpress-plugin-featured-posts-with-thumbnails-highlighting-your-best-articles/
-Description: This widget allows you to add in your blog's sidebar a list of featured post with thumbanil.
-Author: Nando Pappalardo
-Version: 1.2
-Author URI: http://en.yourinspirationweb.com/
+  Plugin Name: Featured Post with thumbnail
+  Plugin URI: http://www.yourinspirationweb.com/en/wordpress-plugin-featured-posts-with-thumbnails-highlighting-your-best-articles/
+  Description: This widget allows you to add in your blog's sidebar a list of featured post with thumbanil.
+  Author: Nando Pappalardo e Giustino Borzacchiello
+  Version: 1.4
+  Author URI: http://en.yourinspirationweb.com/
 
-USAGE:
+  USAGE:
 
-	LICENCE:
+  LICENCE:
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-   
-*/
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-/*Determine the location*/
-$featured_post_plugin_path = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
+ */
 
-function featured_post_css() {
+
+/**
+ * Load configuration files
+ */
+require_once 'scripts/config.php';
+require_once 'scripts/yiw-featured-post-widget.php';
+
+/**
+ * Aggiunge il CSS del plugin
+ * Enqueue plugin CSS file
+ */
+function YIW_featured_post_css() {
 	global $featured_post_plugin_path;
-	wp_enqueue_style('featured-post-css',$featured_post_plugin_path.'featured-post.css');
-}
-add_action('wp_print_styles', 'featured_post_css');
-
-function catch_that_image() {
-    global $post, $posts;
-    $first_img = '';
-    ob_start();
-    ob_end_clean();
-    $output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
-    $first_img = $matches [1] [0];
-
-    if(empty($first_img)){ //Defines a default image
-      $first_img = "/images/default.jpg";
-    }
-    return $first_img;
+	wp_enqueue_style('featured-post-css',
+			  $featured_post_plugin_path . 'featured-post.css');
 }
 
-/*add translate language*/
-load_plugin_textdomain('featured-post','wp-content/plugins/featured-posts/language/');
+add_action('wp_print_styles', 'YIW_featured_post_css');       
 
-/* Aggiungiamo la nostra funzione al gancio widgets_init */
-add_action( 'widgets_init', 'my_widget_featured_posts' );
+/**
+ * Definisce la larghezza delle immagini
+ * Set the images size
+ */
+function YIW_add_image_size() {
+    add_image_size( 'yiw-featured-posts', 137, 57, true );
+}              
 
-/* Funzione che registra il nostro widget */
-function my_widget_featured_posts() {
-	register_widget( 'Featured_posts' );
-}
+add_action('init', 'YIW_add_image_size');     
 
-class Featured_posts extends WP_Widget {
+/**
+ * Mostra i post in evidenza
+ * Show featured posts using unordered list
+ *
+ * @param mixed $args
+ *
+ * $args:
+ * 		title => the title displayed
+ * 		numberposts => number of featured posts shown
+ * 		orderby => order type: http://codex.wordpress.org/Template_Tags/get_posts
+ * 		widththumb => width of post's thumbnail
+ * 		heightthumb => height of post's thumbnail
+ * 		beforetitle => opening tag before for title
+ * 		aftertittle => closing tag for title
+ */
+function featured_posts_YIW($args = null) {
 
-    function Featured_posts() {
-		/* Impostazione del widget */
-		$widget_ops = array( 'classname' => 'widget_featured-posts', 'description' => __('This widget allows you to add in your blog\'s sidebar a list of featured posts.','featured-post') );
+	global $featured_post_plugin_path;
+	$defaults = array(
+		 'title' => 'Featured Posts',
+		 'numberposts' => 5,
+		 'orderby' => 'DESC',
+		 'widththumb' => 73,
+		 'heightthumb' => 73,
+		 'beforetitle' => '<h3>',
+		 'aftertitle' => '</h3>',
+		 'show' => 'featured',
+		 'category' => 'uncategorized'
+	);
 
-		/* Impostazioni di controllo del widget */
-		$control_ops = array( 'width' => 300, 'height' => 350, 'id_base' => 'widget_featured-posts' );
+	/**
+	 *  Merging default values with user selected settings
+	 */
+	$fp = wp_parse_args($args, $defaults);
+	$title = $fp['title'];
+	$showposts = $fp['numberposts'];
+	$orderby = $fp['orderby'];
+	$width_thumb = $fp['widththumb'];
+	$height_thumb = $fp['heightthumb'];
+	$before_title = $fp['beforetitle'];
+	$after_title = $fp['aftertitle'];
+	$show = $fp['show'];
+	$cat_ID = $fp['category'];
 
-		/* Creiamo il widget */
-		$this->WP_Widget( 'widget_featured-posts', __('Featured Posts','featured-post'), $widget_ops, $control_ops );
+	/* List's title */
+	if ( !empty($title) ) {
+		echo $before_title . $title . $after_title;
 	}
+
+	/*
+	 * Modificare i parametri di questa query per mostrare/escludere
+	 * categorie, pagine.
+	 * If you want to exclude categories and/or pages modify this query
+	 * properly
+	 * Info: http://codex.wordpress.org/Template_Tags/get_posts
+	 *
+	 * @todo Aggiungere esempio per mostrare/escludere categorie e pagine in
+	 * questo commento
+	 */
+	global $post;
+	if ( (strcmp($show, 'category') == 0 ) && ($cat_ID)) {
+		$get_posts_query = 'category=' . $cat_ID;
+		$get_posts_query .= '&numberposts=' . $showposts;
+		$get_posts_query .= '&orderby=' . $orderby;
+	} else {
+		$get_posts_query = 'meta_key=featured&meta_value=1';
+		$get_posts_query .= '&numberposts=' . $showposts;
+		$get_posts_query .= '&orderby=' . $orderby;
+	}
+	$featured_posts = get_posts($get_posts_query);
+	?>
 	
-	function widget( $args, $instance ) {
-		extract( $args );
-		global $featured_post_plugin_path;
-
-		/* User-selected settings. */
-		$title = apply_filters('widget_title', $instance['title'] );
-		
-		$showposts                    = $instance['showposts'];
-		$orderby                      = $instance['orderby'];
-		$width_thumb                  = $instance['width-thumb'];
-		$height_thumb                 = $instance['height-thumb'];
-
-		/* Before widget (definito dal tema). */
-		echo $before_widget;
-
-		/* Titolo del widget (before e after definiti dal tema). */
-		if ( $title )
-			echo $before_title . $title . $after_title;
-
-		query_posts('caller_get_posts=1&meta_key=featured&meta_value=1&showposts='.$showposts.'&orderby='.$orderby.'');
-		
-		echo "<ul>";
-		
-            if (have_posts()) : while(have_posts()) : the_post(); 
-            	?>
-                <li>
-                    <img src="<?php echo $featured_post_plugin_path ?>/scripts/timthumb.php?src=<?php echo catch_that_image() ?>&amp;h=<?php echo $height_thumb ?>&amp;w=<?php echo $width_thumb ?>&amp;zc=1" class="alignleft" alt="<?php the_title(); ?>" />
-                    
-                    <div class="featured-title"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></div>
-                    
-                    <div class="clearer"></div>
-                </li>
-            <?php
-            endwhile;
-            endif;
-		
-		echo "</ul>";
-
-		/* After widget (definito dal tema). */
-		echo $after_widget;
-	}
+	<ul id="yiw-featured-post">
+	   <li>
+	       <a href="<?php the_permalink() ?>" class="featured-thumb"><?php the_post_thumbnail('yiw-featured-posts'); ?></a>
+	       <h4 class="featured-title">
+	           <a href="<?php the_permalink() ?>"><?php the_title(); ?></a>
+	       </h4>
+	   </li>
+	</ul>
 	
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
+	<?php
+}
 
-		/* Strip tags (if needed) and update the widget settings. */
-		$instance['title'] = strip_tags( $new_instance['title'] );
-		
-		$instance['showposts'] = $new_instance['showposts'];
-		$instance['orderby'] = $new_instance['orderby'];
-		$instance['width-thumb'] = $new_instance['width-thumb'];
-		$instance['height-thumb'] = $new_instance['height-thumb'];
+/* END featured_posts_YIW */
 
-		return $instance;
-	}
-	
-	function form( $instance ) {
-
-		/* Impostazioni di default del nostro widget */
-		$defaults = array( 'title' => __('Featured Posts','featured-post'), 'showposts' => '', 'orderby' => '', 'width-thumb' => '73', 'height-thumb' => '73' );
-		                   
-		$instance = wp_parse_args( (array) $instance, $defaults ); ?>
-		
-		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e('Title:','featured-post') ?></label>
-			<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" style="width:100%;" />
-		</p>
-		
-		<!-- numero di post da visualizzare -->
-		<p>
-			<select name="<?php echo $this->get_field_name( 'showposts' ); ?>" id="<?php echo $this->get_field_id( 'showposts' ); ?>" >
-            	<?php 
-            	for ($i=0; $i<=100; $i++) { 
-            	    if ($instance['showposts'] == $i) {
-            	        $selected = " selected='selected'";
-            	    } else {
-            	        $selected = "";
-            	    }
-            	    echo '<option class="level-0" value="'.$i.'"'.$selected.'>'.$i.'</option>';
-            	}
-            	?>
-            </select>
-			<label for="<?php echo $this->get_field_id( 'showposts' ); ?>"><?php _e('How many posts do you want to display?','featured-post') ?></label>
-		</p>
-		
-		<!-- scelta del tipo di ordinamento -->
-		<p>
-			<select name="<?php echo $this->get_field_name( 'orderby' ); ?>" id="<?php echo $this->get_field_id( 'orderby' ); ?>" >
-                <option class="level-0" value="rand" <?php if ($instance['orderby'] == "random") echo " selected='selected'" ?>><?php _e('Random','featured-post') ?></option>
-                <option class="level-0" value="title" <?php if ($instance['orderby'] == "title") echo " selected='selected'" ?>><?php _e('Title','featured-post') ?></option>
-                <option class="level-0" value="date" <?php if ($instance['orderby'] == "date") echo " selected='selected'" ?>><?php _e('Date','featured-post') ?></option>
-                <option class="level-0" value="author" <?php if ($instance['orderby'] == "author") echo " selected='selected'" ?>><?php _e('Author','featured-post') ?></option>
-                <option class="level-0" value="modified" <?php if ($instance['orderby'] == "modified") echo " selected='selected'" ?>><?php _e('Modified','featured-post') ?></option>
-                <option class="level-0" value="ID" <?php if ($instance['orderby'] == "ID") echo " selected='selected'" ?>><?php _e('ID','featured-post') ?></option>
-            </select>
-			<label for="<?php echo $this->get_field_id( 'orderby' ); ?>"><?php _e('Choose type of order:','featured-post') ?></label>
-		</p>
-		
-		<p>
-            <input id="<?php echo $this->get_field_id( 'width-thumb' ); ?>" name="<?php echo $this->get_field_name( 'width-thumb' ); ?>" value="<?php echo $instance['width-thumb']; ?>" style="width:20%;" />
-			<label for="<?php echo $this->get_field_id( 'width-thumb' ); ?>"><?php _e('Width Thumbnail','featured-post') ?></label>
-		</p>
-		
-		<p>
-            <input id="<?php echo $this->get_field_id( 'height-thumb' ); ?>" name="<?php echo $this->get_field_name( 'height-thumb' ); ?>" value="<?php echo $instance['height-thumb']; ?>" style="width:20%;" />
-			<label for="<?php echo $this->get_field_id( 'height-thumb' ); ?>"><?php _e('Height Thumbnail','featured-post') ?></label>
-		</p>
-		<?php
-		
+/**
+ * Aggiunge/rimuove il campo personalizzato featured
+ * Add/remove featured custom field
+ *
+ * @param integer $post_ID
+ */
+function YIW_add_featured($post_ID) {
+	$articolo = get_post($post_ID);
+	if ( isset($_POST['insert_featured_post']) ) {
+		if ( $_POST['insert_featured_post'] == 'yes' ) {
+			add_post_meta($articolo->ID, 'featured', 1, TRUE) ||
+					  update_post_meta($articolo->ID, 'featured', 1);
+		} elseif ( $_POST['insert_featured_post'] == 'no' ) {
+			delete_post_meta($articolo->ID, 'featured');
+		}
 	}
 }
 
-function add_featured($post_ID) {
-    $articolo = get_post($post_ID);
-    
-    if ($_POST['insert_featured_post'] == 'yes') {
-        add_post_meta($articolo->ID, 'featured', 1, TRUE) or update_post_meta($articolo->ID, 'featured', 1);
-    }
-    elseif ( $_POST['insert_featured_post'] == 'no' ) { 
-        delete_post_meta($articolo->ID, 'featured');
-    }
+/**
+ *
+ * Mostra il form featured nella sezione "Scrivi Post"
+ * Shows featured form in "Write Post" section
+ */
+function YIW_post_box() {
+	global $post;
+	$yes = '';
+	$no = '';
+	$featured = get_post_meta($post->ID, 'featured', 1);
+	if ( $featured ) {
+		$yes = 'selected="selected"';
+	} else {
+		$no = 'selected="selected"';
+	}
+	echo '<label for="insert_featured_post">' .
+	__('Featured post?', YIW_TEXT_DOMAIN) . '</label>';
+	echo '<select name="insert_featured_post" id="insert_featured_post">';
+	echo '<option value="yes" ' . $yes . ' >' .
+	__('Yes', YIW_TEXT_DOMAIN) . '</option>';
+	echo '<option value="no" ' . $no . ' >' .
+	__('No ', YIW_TEXT_DOMAIN) . '</option>';
+	echo '</select>';
 }
 
-function post_box(){
-    global $post;
-    $featured = get_post_meta($post->ID,featured,1);
-   ?>
-    <label for="insert_featured_post"><?php _e('Featured post?','featured-post') ?></label>
-    <select name="insert_featured_post" id="insert_featured_post">
-      <option value="yes" <?php if ($featured) echo 'selected="selected"'?>><?php _e('Yes','featured-post') ?>&nbsp;</option>
-      <option value="no" <?php if (!$featured) echo 'selected="selected"'?>><?php _e('No ','featured-post') ?>&nbsp;</option>
-   </select>
-<?php
-}
 function my_post_options_box() {
-   add_meta_box('post_info', __('Featured','featured-post'), 'post_box', 'post', 'side', 'high');
+	add_meta_box('post_info', __('Featured', YIW_TEXT_DOMAIN),
+			  'YIW_post_box', 'post', 'side', 'high');
 }
-add_action('admin_menu', 'my_post_options_box');
 
-add_action('new_to_publish', 'add_featured');
-add_action('save_post', 'add_featured');
+add_action('admin_menu', 'my_post_options_box');
+add_action('new_to_publish', 'YIW_add_featured');
+add_action('save_post', 'YIW_add_featured');
+
+
+/*
+ * aggiunge colonna nella pagina modifica dei post
+ *
+ * Il filtro 'manage_posts_columns' permette di aggiungere o rimuovere una
+ * colonna dalla sezione "Modifica Post".
+ * Per aggiungerla, basta fare come sotto,
+ * ovvero aggiungere un elemento all'array $defaults, che ha come valore
+ * l'intestazione della colonna.
+ * Per rimuoverla si può usare unset($defaults['nomeColonna'])
+ *
+ * È molto importante ritornare l'array $defaults, come per tutti i filter
+ */
+add_filter('manage_posts_columns', 'yiw_add_column');
+
+function yiw_add_column($defaults) {
+	$defaults['yiw-featured'] = __('Featured', YIW_TEXT_DOMAIN);
+	return $defaults;
+}
+
+/*
+ * Recupera dal database tutti i post che hanno il custom field featured
+ * attivato
+ * FIXME mi sono accorto che il nome del nostro custom field, featured, è
+ * veramente troppo comune. Bisognerebbe cambiarlo e metterlo in una variabile
+ * però così facendo, bisognerebbe aggiornare tutti i post
+ */
+add_action('manage_posts_custom_column', 'yiw_featured_column', 10, 2);
+
+function yiw_featured_column($column_name, $id) {
+	if ( $column_name == 'yiw-featured' ) {
+		global $wpdb;
+		$queryStr = 'SELECT meta_value FROM ' . $wpdb->prefix . 'postmeta ';
+		$queryStr .= 'WHERE meta_key="featured" and post_id=' . $id;
+		$result = $wpdb->get_results($queryStr, ARRAY_A);
+		if ( isset($result[0]) && ($result[0]['meta_value'] == '1') ) {
+			_e("Yes", YIW_TEXT_DOMAIN);
+		} else {
+			_e("No", YIW_TEXT_DOMAIN);
+		}
+	}
+}
+
+function yiw_add_widget_script(){
+	global $featured_post_plugin_path;
+	wp_enqueue_script('yiw_widget_script', $featured_post_plugin_path . 'js/yiw_widget_script.js');
+}
+add_action('admin_head', 'yiw_add_widget_script');
 ?>
