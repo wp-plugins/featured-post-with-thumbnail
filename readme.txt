@@ -5,7 +5,7 @@ Donate link: https://www.paypal.com/it/cgi-bin/webscr?cmd=_flow&SESSION=QeFc087z
 Tags: Post, Posts, highlight, widget, thumbnail, Featured Post with Thumbnail, Featured Post, Post, highlighting best articles,
 Requires at least: 2.8, PHP4 & PHP5
 Tested up to: 2.9
-Stable tag: 1.5
+Stable tag: 1.5.1
  
 A really simple way of putting featured posts on your website.
 
@@ -55,6 +55,10 @@ For any clarifications, suggestions, or criticism you can leave a comment on <a 
 3. Widget Featured Posts in action
 
 == Changelog ==
+
+= 1.5.1 = 
+
+* fixed: compatible with previous versions of the plugin
 
 = 1.5 =
 

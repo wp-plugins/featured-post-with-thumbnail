@@ -2,14 +2,14 @@
 /*
  * @package Featured Posts
  * @author Nando Pappalardo e Giustino Borzacchiello
- * @version 1.5
+ * @version 1.5.1
  */
 /*
   Plugin Name: Featured Post with thumbnail
   Plugin URI: http://www.yourinspirationweb.com/en/wordpress-plugin-featured-posts-with-thumbnails-highlighting-your-best-articles/
   Description: This widget allows you to add in your blog's sidebar a list of featured post with thumbanil.
   Author: Nando Pappalardo e Giustino Borzacchiello
-  Version: 1.5
+  Version: 1.5.1
   Author URI: http://en.yourinspirationweb.com/
 
   USAGE:
@@ -48,17 +48,27 @@ function YIW_featured_post_css() {
 			  $featured_post_plugin_path . 'featured-post.css');
 }
 
-add_action('wp_print_styles', 'YIW_featured_post_css');       
+add_action('wp_print_styles', 'YIW_featured_post_css');  
+
 
 /**
- * Definisce la larghezza delle immagini
- * Set the images size
+ * Recupera la prima immagine del post
+ * Returns the first image in the post
+ *
  */
-function YIW_add_image_size() {
-    add_image_size( 'yiw-featured-posts', 137, 57, true );
-}              
+function catch_that_image() {
+   global $post, $posts, $featured_post_plugin_path;
+   $first_img = '';
+   ob_start();
+   ob_end_clean();
+   $output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
+   $first_img = $matches [1] [0];
 
-add_action('init', 'YIW_add_image_size');     
+   if(empty($first_img)) { //Defines a default image
+      $first_img = $featured_post_plugin_path . "images/default.gif";
+   }
+   return $first_img;
+}       
 
 /**
  * Mostra i post in evidenza
@@ -134,8 +144,17 @@ function featured_posts_YIW($args = null) {
 	
 	<ul id="yiw-featured-post">
 	   <li>
-	       <a href="<?php the_permalink() ?>" class="featured-thumb"><?php the_post_thumbnail('yiw-featured-posts'); ?></a>
-	       <h4 class="featured-title">
+	       <a href="<?php the_permalink() ?>" class="featured-thumb">
+	       <?php if ( (function_exists('the_post_thumbnail')) && (has_post_thumbnail()) ) : 
+               $image = wp_get_attachment_image_src( get_post_thumbnail_id(), 'full' ); ?>
+               <img src="<?php echo $featured_post_plugin_path ?>scripts/timthumb.php?src=<?php echo $image[0] ?>&amp;h=<?php echo $height_thumb ?>&amp;w=<?php echo $width_thumb ?>&amp;zc=1" class="alignleft" alt="<?php the_title(); ?>" />
+           
+	       <?php else : ?>
+	           <img src="<?php echo $featured_post_plugin_path ?>scripts/timthumb.php?src=<?php echo catch_that_image() ?>&amp;h=<?php echo $height_thumb ?>&amp;w=<?php echo $width_thumb ?>&amp;zc=1" class="alignleft" alt="<?php the_title(); ?>" />
+	       <?php endif; ?>
+	       </a>
+           
+           <h4 class="featured-title">
 	           <a href="<?php the_permalink() ?>"><?php the_title(); ?></a>
 	       </h4>
 	   </li>
