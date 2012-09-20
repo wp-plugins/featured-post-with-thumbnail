@@ -6,7 +6,7 @@
 
 
 
-  /*
+/*
  * Aggiungiamo la nostra funzione al gancio widgets_init
  * Add our function to widgets_init hook
  */
@@ -177,7 +177,7 @@ a list of featured posts.";
 	}
 
 	private function showFeaturedOrCategory($instance) {
-		echo '<p>';
+		echo '<p id="yiw_featured_post_show">';
 		echo '<label for="' . $this->get_field_id('show') . '">' . _e("Featured or category?", YIW_TEXT_DOMAIN) . '</label>';
 		echo '<select id="' . $this->get_field_id('show') . '" name="' . $this->get_field_name('show') . '">';
 		echo '<option value="featured" ' . selected($instance['show'], 'featured') . '>Featured</option>';
@@ -185,10 +185,10 @@ a list of featured posts.";
 		echo '</select>';
 		echo '</p>';
 
-		echo '<p>';
+		echo '<p id="yiw_featured_post_category">';
 		echo '<label for="' . $this->get_field_id('category') . '">' . _e('Category', YIW_TEXT_DOMAIN) . '</label>';
 		echo '<select id="' . $this->get_field_id('category') . '" name="' . $this->get_field_name('category') . '">';
-		$categories = get_categories($args);
+		$categories = get_categories();
 		foreach ($categories as $c) {
 			echo '<option value="'. $c->cat_ID .'" ' . selected($instance['category'], $c->cat_ID) . '>'. $c->name .'</option>';
 		}
