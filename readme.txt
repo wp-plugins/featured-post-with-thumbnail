@@ -1,11 +1,13 @@
 === Plugin Name ===
 
-Contributors: Nando Pappalardo e Giustino Borzacchiello
+Contributors: nando.pappalardo, jubstuff
 Donate link: https://www.paypal.com/it/cgi-bin/webscr?cmd=_flow&SESSION=QeFc087zjhKgcjE1wZC3BgVJq7aKowY7yN3xb2letu-oS9GgkUtYkXl95nC&dispatch=5885d80a13c0db1fc53a056acd1538874a43d73a07f26b2caf7353d6a9263490
-Tags: Post, Posts, highlight, widget, thumbnail, Featured Post with Thumbnail, Featured Post, Post, highlighting best articles,
+Tags: Post, Posts, highlight, widget, thumbnail, Featured Post with Thumbnail, Featured Post, Post, highlighting best articles
 Requires at least: 2.8, PHP4 & PHP5
 Tested up to: 3.4.2
 Stable tag: 1.5.2
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
 A really simple way of putting featured posts on your website.
 
@@ -38,15 +40,11 @@ The Featured Posts can be installed in 3 easy steps:
 
 3. Inside the Wordpress admin, go to Appearance > Widgets, Add this widget in the sidebar section in which you want to view it.
 
-== Frequently Asked Questions ==
-
-= A question that someone might have =
-
-An answer to that question.
-
 **Support Forum**
 
 For any clarifications, suggestions, or criticism you can leave a comment on <a href="http://forum.yourinspirationweb.com/support-featured-post-with-thumbnail-plugin-f21.html">Forum Support</a>.
+
+== Frequently Asked Questions ==
 
 == Screenshots ==
 
@@ -100,3 +98,8 @@ For any clarifications, suggestions, or criticism you can leave a comment on <a 
     Modified
     ID
 * Possibility to choose the size of thumbnails.
+
+== Upgrade Notice ==
+
+= 1.5.2 =
+This version fixes the problem of featured posts not showing.
