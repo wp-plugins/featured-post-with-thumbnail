@@ -61,12 +61,14 @@ function catch_that_image() {
    $first_img = '';
    ob_start();
    ob_end_clean();
-   $output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
-   $first_img = $matches [1] [0];
+   $num_images = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $post->post_content, $matches);
 
-   if(empty($first_img)) { //Defines a default image
+   if($num_images > 0) {
+       $first_img = $matches[1][0];
+   } else {
       $first_img = $featured_post_plugin_path . "images/default.gif";
    }
+
    return $first_img;
 }       
 
@@ -143,6 +145,9 @@ function featured_posts_YIW($args = null) {
 	?>
 	
 	<ul id="yiw-featured-post">
+<?php foreach($featured_posts as $post) :
+setup_postdata($post);
+?>
 	   <li>
 	       <a href="<?php the_permalink() ?>" class="featured-thumb">
 	       <?php if ( (function_exists('the_post_thumbnail')) && (has_post_thumbnail()) ) : 
@@ -158,6 +163,7 @@ function featured_posts_YIW($args = null) {
 	           <a href="<?php the_permalink() ?>"><?php the_title(); ?></a>
 	       </h4>
 	   </li>
+<?php endforeach; ?>
 	</ul>
 	
 	<?php
@@ -262,7 +268,10 @@ function yiw_featured_column($column_name, $id) {
 
 function yiw_add_widget_script(){
 	global $featured_post_plugin_path;
-	wp_enqueue_script('yiw_widget_script', $featured_post_plugin_path . 'js/yiw_widget_script.js');
+    wp_enqueue_script('yiw_widget_script', $featured_post_plugin_path . 'js/yiw_widget_script.js', 
+        array('jquery'),
+        false,
+        true);
 }
 add_action('admin_head', 'yiw_add_widget_script');
 ?>
