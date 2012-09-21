@@ -9,7 +9,7 @@
   Plugin URI: http://www.yourinspirationweb.com/en/wordpress-plugin-featured-posts-with-thumbnails-highlighting-your-best-articles/
   Description: This widget allows you to add in your blog's sidebar a list of featured post with thumbanil.
   Author: Nando Pappalardo e Giustino Borzacchiello
-  Version: 1.5.1
+  Version: 1.5.2
   Author URI: http://en.yourinspirationweb.com/
 
   USAGE:
