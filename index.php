@@ -2,7 +2,7 @@
 /*
  * @package Featured Posts
  * @author Nando Pappalardo e Giustino Borzacchiello
- * @version 1.5.1
+ * @version 1.5.2
  */
 /*
   Plugin Name: Featured Post with thumbnail
